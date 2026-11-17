@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartSense</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef3f8;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: linear-gradient(135deg, #0f4c81, #1976d2);
+            color: white;
+            padding: 25px 5%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .title-area h1 {
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+
+        .title-area p {
+            opacity: 0.9;
+        }
+
+        .connection {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 30px;
+        }
+
+        .connection-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #ffd166;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        /* ================= CONTROL PANEL ================= */
+
+        .control-panel {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .control-panel h2 {
+            margin-bottom: 18px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .start-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .stop-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .read-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .clear-btn {
+            background: #64748b;
+            color: white;
+        }
+
+        /* ================= SENSOR CARDS ================= */
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .sensor-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sensor-card::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            right: -30px;
+            top: -30px;
+            border-radius: 50%;
+            background: rgba(37,99,235,0.08);
+        }
+
+        .sensor-title {
+            font-size: 17px;
+            margin-bottom: 12px;
+        }
+
+        .sensor-value {
+            font-size: 46px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sensor-subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status-panel {
+            margin-top: 22px;
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        .status-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .status-box {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 12px;
+        }
+
+        .status-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .status-value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        /* ================= STATISTICS ================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        /* ================= ALERT ================= */
+
+        .alert {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ================= CHART ================= */
+
+        .chart-panel {
+            margin-top: 22px;
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        canvas {
+            width: 100%;
+            height: 320px;
+            margin-top: 15px;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-panel {
+            margin-top: 22px;
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 30px 15px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title-area h1 {
+                font-size: 24px;
+            }
+
+            .sensor-value {
+                font-size: 38px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+        <div class="header-content">
+            <div class="title-area">
+                <h1>SmartSense</h1>
+                <p>Real-Time Temperature & Humidity Monitoring</p>
+            </div>
+            <div class="connection">
+                <span class="connection-dot" id="connectionDot"></span>
+                <span id="connectionText">System Offline</span>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+        <!-- CONTROL PANEL -->
+        <section class="control-panel">
+            <h2>Sensor Controls</h2>
+            <div class="controls">
+                <button
+                    class="start-btn"
+                    id="startButton"
+                    onclick="startSensing()">
+                    ▶ Start Sensing
+                </button>
+
+                <button
+                    class="stop-btn"
+                    id="stopButton"
+                    onclick="stopSensing()"
+                    disabled>
+                    ⏹ Stop Sensing
+                </button>
+
+                <button
+                    class="read-btn"
+                    onclick="readNow()">
+                    🔄 Read Now
+                </button>
+
+                <button
+                    class="clear-btn"
+                    onclick="clearReadings()">
+                    🗑 Clear Readings
+                </button>
+            </div>
+        </section>
+
+
+        <!-- SENSOR CARDS -->
+        <section class="sensor-grid">
+            <div class="sensor-card">
+                <div class="sensor-title">🌡 Temperature</div>
+                <div class="sensor-value" id="temperature">-- °C</div>
+                <div class="sensor-subtitle">Current Temperature</div>
+            </div>
+
+            <div class="sensor-card">
+                <div class="sensor-title">💧 Humidity</div>
+                <div class="sensor-value" id="humidity">-- %</div>
+                <div class="sensor-subtitle">Relative Humidity</div>
+            </div>
+        </section>
+
+
+        <!-- SYSTEM STATUS -->
+        <section class="status-panel">
+            <h2>System Information</h2>
+            <div class="status-row">
+                <div class="status-box">
+                    <div class="status-label">Device</div>
+                    <div class="status-value">SoftwareSensor</div>
+                </div>
+
+                <div class="status-box">
+                    <div class="status-label">Sensing Status</div>
+                    <div class="status-value" id="sensingStatus">NOT STARTED</div>
+                </div>
+
+                <div class="status-box">
+                    <div class="status-label">Last Update</div>
+                    <div class="status-value" id="lastUpdate">--</div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h3>Average Temperature</h3>
+                <p id="avgTemperature">-- °C</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Average Humidity</h3>
+                <p id="avgHumidity">-- %</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Highest Temperature</h3>
+                <p id="maxTemperature">-- °C</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Lowest Temperature</h3>
+                <p id="minTemperature">-- °C</p>
+            </div>
+        </section>
+
+
+        <!-- ENVIRONMENTAL ALERT -->
+        <div class="alert" id="alertBox">
+            ✅ Environmental conditions are normal.
+        </div>
+
+
+        <!-- LIVE CHART -->
+        <section class="chart-panel">
+            <h2>Live Environmental Trend</h2>
+            <canvas id="environmentChart"></canvas>
+        </section>
+
+
+        <!-- RECENT READINGS -->
+        <section class="table-panel">
+            <h2>Recent Sensor Readings</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Time</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                    </tr>
+                </thead>
+                <tbody id="readingTable">
+                    <tr>
+                        <td colspan="4">No readings available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+        <p>SmartSense | AWS Academy Learner Lab</p>
+    </footer>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+        // Set your deployed API Gateway invoke URL with resource path appended
+        const API_URL = "https://zvpgha00w2.execute-api.us-east-1.amazonaws.com/dev/sensor";
+
+        let sensingInterval = null;
+        let readings = [];
+
+
+        // START SENSING
+        function startSensing() {
+            if (sensingInterval !== null) {
+                return;
+            }
+
+            document.getElementById("startButton").disabled = true;
+            document.getElementById("stopButton").disabled = false;
+            document.getElementById("sensingStatus").textContent = "SENSING";
+            document.getElementById("connectionText").textContent = "System Online";
+            document.getElementById("connectionDot").style.background = "#22c55e";
+
+            fetchSensorReading();
+
+            sensingInterval = setInterval(fetchSensorReading, 5000);
+        }
+
+
+        // STOP SENSING
+        function stopSensing() {
+            clearInterval(sensingInterval);
+            sensingInterval = null;
+
+            document.getElementById("startButton").disabled = false;
+            document.getElementById("stopButton").disabled = true;
+            document.getElementById("sensingStatus").textContent = "STOPPED";
+            document.getElementById("connectionText").textContent = "System Offline";
+            document.getElementById("connectionDot").style.background = "#ef4444";
+        }
+
+
+        // READ NOW
+        function readNow() {
+            document.getElementById("connectionText").textContent = "Reading Sensor...";
+            document.getElementById("connectionDot").style.background = "#2563eb";
+
+            fetchSensorReading().then(() => {
+                if (sensingInterval === null) {
+                    document.getElementById("connectionText").textContent = "System Ready";
+                    document.getElementById("connectionDot").style.background = "#f59e0b";
+                }
+            });
+        }
+
+
+        // FETCH SENSOR DATA FROM AWS API GATEWAY
+        async function fetchSensorReading() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API responded with status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Handles responses whether wrapped inside result.data or at root level
+                const sensorData = result.data || result;
+                const temperature = Number(sensorData.temperature);
+                const humidity = Number(sensorData.humidity);
+
+                const now = new Date();
+                const time = now.toLocaleTimeString();
+
+                const reading = {
+                    time: time,
+                    temperature: temperature,
+                    humidity: humidity
+                };
+
+                readings.unshift(reading);
+
+                if (readings.length > 10) {
+                    readings.pop();
+                }
+
+                document.getElementById("temperature").textContent = temperature + " °C";
+                document.getElementById("humidity").textContent = humidity + " %";
+                document.getElementById("lastUpdate").textContent = time;
+
+                updateTable();
+                updateStatistics();
+                checkEnvironment();
+                drawChart();
+
+            } catch (error) {
+                console.error("Fetch sensor error:", error);
+                document.getElementById("connectionText").textContent = "Connection Error";
+                document.getElementById("connectionDot").style.background = "#ef4444";
+            }
+        }
+
+
+        // UPDATE TABLE
+        function updateTable() {
+            const table = document.getElementById("readingTable");
+            table.innerHTML = "";
+
+            if (readings.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4">No readings available</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            readings.forEach((reading, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${reading.time}</td>
+                    <td>${reading.temperature} °C</td>
+                    <td>${reading.humidity} %</td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+
+        // STATISTICS
+        function updateStatistics() {
+            if (readings.length === 0) {
+                return;
+            }
+
+            const temperatures = readings.map(r => r.temperature);
+            const humidities = readings.map(r => r.humidity);
+
+            const avgTemperature = temperatures.reduce((a, b) => a + b, 0) / temperatures.length;
+            const avgHumidity = humidities.reduce((a, b) => a + b, 0) / humidities.length;
+            const maxTemperature = Math.max(...temperatures);
+            const minTemperature = Math.min(...temperatures);
+
+            document.getElementById("avgTemperature").textContent = avgTemperature.toFixed(1) + " °C";
+            document.getElementById("avgHumidity").textContent = avgHumidity.toFixed(1) + " %";
+            document.getElementById("maxTemperature").textContent = maxTemperature.toFixed(1) + " °C";
+            document.getElementById("minTemperature").textContent = minTemperature.toFixed(1) + " °C";
+        }
+
+
+        // ENVIRONMENT CHECK
+        function checkEnvironment() {
+            const tempText = document.getElementById("temperature").textContent.replace(" °C", "").trim();
+            const humText = document.getElementById("humidity").textContent.replace(" %", "").trim();
+
+            const temperature = Number(tempText);
+            const humidity = Number(humText);
+            const alertBox = document.getElementById("alertBox");
+
+            if (isNaN(temperature) || isNaN(humidity)) {
+                return;
+            }
+
+            if (temperature > 40 || humidity > 90) {
+                alertBox.textContent = "🚨 Critical: Environmental values are extremely high.";
+                alertBox.className = "alert danger";
+            } else if (temperature > 35 || humidity > 80) {
+                alertBox.textContent = "⚠ Warning: Environmental values are high.";
+                alertBox.className = "alert warning";
+            } else {
+                alertBox.textContent = "✅ Environmental conditions are normal.";
+                alertBox.className = "alert";
+            }
+        }
+
+
+        // CLEAR READINGS
+        function clearReadings() {
+            readings = [];
+
+            document.getElementById("temperature").textContent = "-- °C";
+            document.getElementById("humidity").textContent = "-- %";
+            document.getElementById("avgTemperature").textContent = "-- °C";
+            document.getElementById("avgHumidity").textContent = "-- %";
+            document.getElementById("maxTemperature").textContent = "-- °C";
+            document.getElementById("minTemperature").textContent = "-- °C";
+            document.getElementById("lastUpdate").textContent = "--";
+
+            document.getElementById("readingTable").innerHTML = `
+                <tr>
+                    <td colspan="4">No readings available</td>
+                </tr>
+            `;
+
+            document.getElementById("alertBox").textContent = "✅ Environmental conditions are normal.";
+            document.getElementById("alertBox").className = "alert";
+
+            drawChart();
+        }
+
+
+        // DRAW CHART
+        function drawChart() {
+            const canvas = document.getElementById("environmentChart");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+
+            const chartWidth = canvas.offsetWidth;
+            const chartHeight = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, chartWidth, chartHeight);
+
+            if (readings.length < 2) {
+                ctx.fillStyle = "#64748b";
+                ctx.font = "16px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(
+                    "Start sensing to view the live chart",
+                    chartWidth / 2,
+                    chartHeight / 2
+                );
+                return;
+            }
+
+            const points = [...readings].reverse();
+            const temperatures = points.map(r => r.temperature);
+            const max = Math.max(...temperatures) + 2;
+            const min = Math.min(...temperatures) - 2;
+            const padding = 40;
+            const graphWidth = chartWidth - padding * 2;
+            const graphHeight = chartHeight - padding * 2;
+
+            ctx.strokeStyle = "#dbe3ec";
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (graphHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(chartWidth - padding, y);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = "#2563eb";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            points.forEach((point, index) => {
+                const x = padding + (graphWidth / (points.length - 1)) * index;
+                const y = padding + ((max - point.temperature) / (max - min || 1)) * graphHeight;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            ctx.fillStyle = "#2563eb";
+            points.forEach((point, index) => {
+                const x = padding + (graphWidth / (points.length - 1)) * index;
+                const y = padding + ((max - point.temperature) / (max - min || 1)) * graphHeight;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.fillStyle = "#334155";
+            ctx.font = "14px Arial";
+            ctx.textAlign = "left";
+            ctx.fillText("Temperature Trend (°C)", padding, 20);
+        }
+    </script>
+
+</body>
+</html>
